@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "baas": "https://s3.amazonaws.com/baas-sdks/js/npm/ea2ed50d9c283a13249aba6a398292872b48e44c/baas.tgz",
+    "lodash.debounce": "^4.0.8",
     "mobx": "^3.1.9",
     "mobx-react": "^4.1.8",
     "react": "16.0.0-alpha.6",
