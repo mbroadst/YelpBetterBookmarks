@@ -2,6 +2,7 @@ import { observer } from 'mobx-react';
 import React, { Component } from 'react';
 import {
   AppRegistry,
+  Button,
   Dimensions,
   StyleSheet,
   Text,
@@ -9,8 +10,8 @@ import {
 } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import Drawer from 'react-native-drawer';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import FilterView from './components/filter-view';
-import Button from './components/button';
 import BookmarkStore from './stores/bookmark-store';
 
 const { width, height } = Dimensions.get('window');
@@ -66,6 +67,7 @@ export default class App extends Component {
         type='overlay'
         ref={ (ref) => this.drawer = ref }
         content={ filterView }
+        open={true}
         tapToClose={ true }
         openDrawerOffset={ 0.2 } // 20% gap on the right side of drawer
         panCloseMask={ 0.2 }
@@ -82,19 +84,21 @@ export default class App extends Component {
             region={this.state.region}
             onRegionChange={this.onRegionChange}
           >
-            {this.state.markers.map((marker, idx) => (
+            {this.bookmarkStore.bookmarks.map((bookmark, idx) => (
               <MapView.Marker
                 key={idx}
-                coordinate={marker.coordinate}
-                title={marker.title}
-                description={marker.description}
+                coordinate={bookmark.coordinate}
+                title={bookmark.data.name}
+                description={"Some Description"}
               />
             ))}
           </MapView>
 
-          <Button
+          <Icon.Button
             onPress={ () => this.openDrawer() }
-            text="Open Drawer"
+            title="Open Drawer"
+            name="bars"
+            iconStyle={{ marginRight: 0 }}
           />
         </View>
       </Drawer>
@@ -122,6 +126,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   map: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFillObject
   }
 });
