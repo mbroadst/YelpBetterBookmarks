@@ -1,8 +1,8 @@
+import { observer } from 'mobx-react';
 import React, { Component } from 'react';
 import {
   AppRegistry,
   Dimensions,
-  PropTypes,
   StyleSheet,
   Text,
   View
@@ -11,6 +11,7 @@ import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import Drawer from 'react-native-drawer';
 import FilterView from './components/filter-view';
 import Button from './components/button';
+import BookmarkStore from './stores/bookmark-store';
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -19,28 +20,34 @@ const LONGITUDE = -122.4324;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
+@observer
 export default class App extends Component {
+  bookmarkStore = new BookmarkStore
+  state = {
+    region: {
+      latitude: LATITUDE,
+      longitude: LONGITUDE,
+      latitudeDelta: LATITUDE_DELTA,
+      longitudeDelta: LONGITUDE_DELTA,
+    },
+    markers: [
+      {
+        title: 'testing',
+        description: 'a test description',
+        coordinate: { latitude: LATITUDE, longitude: LONGITUDE }
+      }
+    ]
+  };
+
   constructor(props) {
     super(props);
 
-    this.state = {
-      region: {
-        latitude: LATITUDE,
-        longitude: LONGITUDE,
-        latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA,
-      },
-      markers: [
-        {
-          title: 'testing',
-          description: 'a test description',
-          coordinate: { latitude: LATITUDE, longitude: LONGITUDE }
-        }
-      ]
-    };
-
     // bind callbacks to `this`
     this.onRegionChange = this.onRegionChange.bind(this);
+
+    // login, and kick off an initial search
+    this.bookmarkStore.authenticate()
+      .then(() => this.bookmarkStore.fetchBookmarks());
   }
 
   openDrawer(){
@@ -51,6 +58,7 @@ export default class App extends Component {
     const filterView =
       <FilterView
         closeDrawer={ () => this.drawer.close() }
+        bookmarkStore={ this.bookmarkStore }
       />
 
     return (
